@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>دعوة فرح 💍 — أحمد & عبير</title>
-<meta name="description" content="دعوة زفاف فاخرة — أحمد وعبير (بربوره) — 27 يوليو 2027" />
+<meta name="description" content="دعوة زفاف فاخرة — أحمد وعبير — 27 يوليو 2027" />
 
 <!-- ====== FONTS: Aref Ruqaa (calligraphy) · Amiri (verses) · Tajawal (body) ====== -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -57,7 +57,7 @@
       <div class="title-ring">💍</div>
       <h1 class="title">دعوة فرح</h1>
       <div class="subtitle"><span class="typing caret" id="typing"></span></div>
-      <div class="names"><span>أحمد</span><i class="amp">&amp;</i><span>عبير<small>(بربوره)</small></span></div>
+      <div class="names"><span>أحمد</span><i class="amp">&amp;</i><span>عبير<small></small></span></div>
       <div class="rule"><span></span>❖<span></span></div>
     </div>
 
@@ -78,6 +78,7 @@
             <circle cx="60" cy="60" r="9"/>
           </g>
         </svg>
+        <div class="door-label">أحمد</div>
       </div>
       <span class="handle"></span>
     </div>
@@ -99,6 +100,7 @@
             <circle cx="60" cy="60" r="9"/>
           </g>
         </svg>
+        <div class="door-label">عبير</div>
       </div>
       <span class="handle"></span>
     </div>
@@ -191,9 +193,11 @@
     <div class="rsvp-ring">💍</div>
     <h3>تأكيد الحضور</h3>
     <p>سعداء بمشاركتكم فرحتنا — من فضلك اكتب اسمك</p>
-    <form id="rsvpForm">
-      <input type="text" id="guestName" placeholder="الاسم الكريم" autocomplete="name" required />
-      <input type="number" id="guestCount" placeholder="عدد الأفراد" min="1" max="50" value="1" />
+    <form id="rsvpForm" novalidate>
+      <input type="text" id="guestName" placeholder="الاسم الكريم" autocomplete="name" />
+      <span class="field-error" id="nameError"></span>
+      <input type="text" id="guestCount" inputmode="numeric" placeholder="عدد الأفراد" value="1" maxlength="2" />
+      <span class="field-error" id="countError"></span>
       <button type="submit" class="btn">إرسال التأكيد 🎉</button>
     </form>
     <div class="rsvp-status" id="rsvpStatus"></div>

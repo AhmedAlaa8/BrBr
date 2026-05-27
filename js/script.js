@@ -22,9 +22,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 (function () {
   const loader = document.getElementById('loader');
   const hide = () => loader && loader.classList.add('hidden');
-  // hide ~1.5s after the script runs, regardless of slow fonts/resources
   setTimeout(hide, 1500);
-  // and as a safety net once everything has loaded
   window.addEventListener('load', () => setTimeout(hide, 600));
 })();
 
@@ -45,14 +43,13 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     setTimeout(() => d.remove(), dur * 1000);
   }
   setInterval(spawn, 420);
-  for (let i = 0; i < 14; i++) setTimeout(spawn, i * 250); // initial fill
+  for (let i = 0; i < 14; i++) setTimeout(spawn, i * 250);
 })();
 
 /* ================================================================
    C. TYPING SUBTITLE
 ================================================================ */
 (function () {
-  // reusable typewriter: types a phrase, pauses, deletes, moves to next — loops
   function typer(el, phrases, typeSpeed) {
     let p = 0, i = 0, deleting = false;
     (function tick() {
@@ -68,7 +65,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     })();
   }
 
-  const hero = document.getElementById('typing');        // subtitle revealed behind the doors
+  const hero = document.getElementById('typing');
 
   if (hero) typer(hero, [
     'بفضل الله وكرمه نتشرّف بدعوتكم 🤍',
@@ -110,9 +107,6 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
 /* ================================================================
    E. SCROLL DRIVER — hall doors opening + section unfold
-   #stage gets --open (0→1) mapped to scroll through the .hall,
-   so the doors swing apart and the title is revealed behind them.
-   Every .reveal element also gets a live --p for the unfold.
 ================================================================ */
 (function () {
   const clamp = v => (v < 0 ? 0 : v > 1 ? 1 : v);
@@ -121,7 +115,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   const stage     = document.getElementById('stage');
   const heroInner = document.getElementById('heroInner');
 
-  if (reduceMotion) {                  // show everything open
+  if (reduceMotion) {
     reveals.forEach(el => el.style.setProperty('--p', '1'));
     if (stage) stage.style.setProperty('--open', '1');
     if (heroInner) { heroInner.style.opacity = '1'; heroInner.style.transform = 'scale(1)'; }
@@ -133,18 +127,16 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   function render() {
     const vh = window.innerHeight;
 
-    /* doors: progress through the tall .hall while .stage is pinned */
     if (hall && stage && heroInner) {
       const total = hall.offsetHeight - vh;
       const open  = clamp((-hall.getBoundingClientRect().top) / (total || 1));
       stage.style.setProperty('--open', open.toFixed(3));
 
-      const hero = clamp((open - 0.45) / 0.5);   // title appears as doors part
+      const hero = clamp((open - 0.45) / 0.5);
       heroInner.style.opacity   = (0.05 + 0.95 * hero).toFixed(3);
       heroInner.style.transform = `scale(${(0.92 + 0.08 * hero).toFixed(3)})`;
     }
 
-    /* unfold for the rest of the sections */
     const start = vh * 0.96, end = vh * 0.42;
     for (const el of reveals) {
       const top = el.getBoundingClientRect().top;
@@ -166,10 +158,11 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 (function () {
   const btn = document.getElementById('musicBtn');
   let ctx, master, playing = false;
-  const chord = [196.00, 246.94, 293.66, 392.00, 493.88]; // warm, low
+  const chord = [196.00, 246.94, 293.66, 392.00, 493.88];
 
   function buildPad() {
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const AC = window.AudioContext || /** @type {any} */(window).webkitAudioContext;
+    ctx = new AC();
     master = ctx.createGain();
     master.gain.value = 0;
     master.connect(ctx.destination);
@@ -251,13 +244,9 @@ const Confetti = (function () {
 })();
 
 /* ================================================================
-   I. RSVP BUTTON → confetti + thank-you
+   I. RSVP
 ================================================================ */
 (function () {
-  /* Each confirmation is written straight into the file  rsvp.json
-     by the local server.   Run:  node server.js   →   http://localhost:3000 */
-  const RSVP_ENDPOINT = 'http://localhost:3000/rsvp';
-
   const openBtn  = document.getElementById('rsvpBtn');
   const modal    = document.getElementById('rsvpModal');
   const closeBtn = document.getElementById('rsvpClose');
@@ -266,40 +255,91 @@ const Confetti = (function () {
   const countIn  = document.getElementById('guestCount');
   const statusEl = document.getElementById('rsvpStatus');
   const thanks   = document.getElementById('thanks');
+  const nameErr  = document.getElementById('nameError');
+  const countErr = document.getElementById('countError');
 
+  function clearErrors() {
+    [nameIn, countIn].forEach(el => el.classList.remove('error'));
+    nameErr.textContent = countErr.textContent = '';
+  }
+  function showError(input, errEl, msg) {
+    input.classList.remove('error');
+    void input.offsetWidth;
+    input.classList.add('error');
+    errEl.textContent = msg;
+    input.focus();
+  }
   function openModal() {
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
-    setTimeout(() => nameIn.focus(), 250);
+    clearErrors();
+    statusEl.textContent = '';
+    setTimeout(() => nameIn.focus(), 260);
   }
   function closeModal() {
+    if (modal.contains(document.activeElement)) document.activeElement.blur();
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
+    openBtn.focus();
   }
 
   openBtn.addEventListener('click', openModal);
   closeBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  countIn.addEventListener('keydown', e => {
+    const nav = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
+    if (!nav.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+  });
+  countIn.addEventListener('input', () => {
+    countIn.value = countIn.value.replace(/\D/g, '');
+    countIn.classList.remove('error');
+    countErr.textContent = '';
+  });
+  nameIn.addEventListener('input', () => {
+    nameIn.classList.remove('error');
+    nameErr.textContent = '';
+  });
+
+  const SHEET_URL = 'https://ahmedalaa8.github.io/BrBr/rsvp.json'; // REPLACE with your Apps Script URL or leave as is to disable savings
+
+  function saveToSheet(record) {
+    if (!SHEET_URL || SHEET_URL === 'YOUR_APPS_SCRIPT_URL') return;
+    fetch(SHEET_URL, {
+      method: 'POST',
+      body: JSON.stringify(record)
+    }).catch(() => {});
+  }
 
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const name = nameIn.value.trim();
-    if (!name) { nameIn.focus(); return; }
-    const count = Math.min(50, Math.max(1, parseInt(countIn.value, 10) || 1));
-    const record = { name, count, date: new Date().toLocaleString('ar-EG') };
+    clearErrors();
 
-    // write the confirmation straight into rsvp.json via the local server
-    fetch(RSVP_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request → no CORS preflight
-      body: JSON.stringify(record)
-    }).catch(() => {/* if the server isn't running the confirmation can't be saved */});
+    const name     = nameIn.value.trim();
+    const countRaw = parseInt(countIn.value, 10);
+    let valid      = true;
+
+    if (name.length < 2) {
+      showError(nameIn, nameErr, 'من فضلك ادخل اسمك الكريم');
+      valid = false;
+    }
+    if (!countIn.value || isNaN(countRaw) || countRaw < 1 || countRaw > 50) {
+      showError(countIn, countErr, 'العدد يجب أن يكون بين ١ و ٥٠');
+      if (valid) valid = false;
+    }
+    if (!valid) return;
+
+    const record = { name, count: countRaw, date: new Date().toLocaleString('ar-EG') };
+    saveToSheet(record);
 
     statusEl.textContent = 'تم تأكيد حضورك يا ' + name + ' 💛';
     Confetti.launch();
     thanks.classList.add('show');
-    form.reset(); countIn.value = 1;
-    setTimeout(closeModal, 1500);
+    form.reset();
+    countIn.value = '1';
+    setTimeout(closeModal, 1600);
   });
 })();
