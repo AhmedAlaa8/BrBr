@@ -42,8 +42,10 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     layer.appendChild(d);
     setTimeout(() => d.remove(), dur * 1000);
   }
-  setInterval(spawn, 420);
-  for (let i = 0; i < 14; i++) setTimeout(spawn, i * 250);
+  if (window.innerWidth >= 600) {
+    setInterval(spawn, 420);
+    for (let i = 0; i < 14; i++) setTimeout(spawn, i * 250);
+  }
 })();
 
 /* ================================================================
@@ -106,14 +108,14 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 })();
 
 /* ================================================================
-   E. SCROLL DRIVER — hall doors opening + section unfold
+   E. SCROLL DRIVER — hall doors + IntersectionObserver for reveals
 ================================================================ */
 (function () {
-  const clamp = v => (v < 0 ? 0 : v > 1 ? 1 : v);
-  const reveals   = [...document.querySelectorAll('.reveal')];
+  const clamp     = v => Math.max(0, Math.min(1, v));
   const hall      = document.getElementById('hall');
   const stage     = document.getElementById('stage');
   const heroInner = document.getElementById('heroInner');
+  const reveals   = [...document.querySelectorAll('.reveal')];
 
   if (reduceMotion) {
     reveals.forEach(el => el.style.setProperty('--p', '1'));
@@ -122,29 +124,39 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     return;
   }
 
+  /* reveals: IntersectionObserver */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      e.target.style.setProperty('--p', e.isIntersecting ? '1' : '0');
+      if (e.isIntersecting) { e.target.style.willChange = 'auto'; io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -5% 0px', threshold: 0.05 });
+  reveals.forEach(el => io.observe(el));
+
+  if (!hall || !stage || !heroInner) return;
+
+  const mobileDoor = document.querySelector('.door.right');
+
+  /* scroll-linked rAF — ديسكتوب وموبايل */
   let ticking = false;
-
   function render() {
-    const vh = window.innerHeight;
+    const rect = hall.getBoundingClientRect();
+    const vh   = window.innerHeight;
+    if (rect.bottom < 0 || rect.top > vh) { ticking = false; return; }
 
-    if (hall && stage && heroInner) {
-      const total = hall.offsetHeight - vh;
-      const open  = clamp((-hall.getBoundingClientRect().top) / (total || 1));
-      stage.style.setProperty('--open', open.toFixed(3));
+    const open = clamp(-rect.top / (hall.offsetHeight - vh || 1));
+    stage.style.setProperty('--open', open.toFixed(3));
 
-      const hero = clamp((open - 0.45) / 0.5);
-      heroInner.style.opacity   = (0.05 + 0.95 * hero).toFixed(3);
-      heroInner.style.transform = `scale(${(0.92 + 0.08 * hero).toFixed(3)})`;
+    /* موبايل: transform مباشر على الباب بدون CSS var عشان يشتغل على الـ GPU بدون لاج */
+    if (mobileDoor && window.innerWidth <= 600) {
+      mobileDoor.style.transform = `rotateY(${(open * 88).toFixed(1)}deg)`;
     }
 
-    const start = vh * 0.96, end = vh * 0.42;
-    for (const el of reveals) {
-      const top = el.getBoundingClientRect().top;
-      el.style.setProperty('--p', clamp((start - top) / (start - end)).toFixed(3));
-    }
+    const hero = clamp((open - 0.45) / 0.5);
+    heroInner.style.opacity   = (0.05 + 0.95 * hero).toFixed(3);
+    heroInner.style.transform = `scale(${(0.92 + 0.08 * hero).toFixed(3)})`;
     ticking = false;
   }
-
   function onScroll() { if (!ticking) { requestAnimationFrame(render); ticking = true; } }
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);

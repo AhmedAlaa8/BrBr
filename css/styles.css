@@ -108,6 +108,7 @@ body{
 .reveal{
   --p:0;opacity:var(--p);
   transform:translateY(calc((1 - var(--p)) * 38px));
+  transition:opacity .75s ease,transform .75s ease;
   will-change:transform,opacity;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -358,10 +359,115 @@ footer .small{font-weight:300;color:var(--ivory-dim);font-size:.95rem}
   .medallion{width:144px;height:144px}
   .pname{font-size:1.25rem}
   .music-btn{width:46px;height:46px;font-size:1.15rem;top:14px;left:14px}
-  .door-inner{inset:16px;padding-top:20%}
   .handle{height:90px}
   .open-hint{bottom:20px;font-size:.8rem}
   .rsvp-text{line-height:1.95}
+
+  /* ---- باب حقيقي على الموبايل ---- */
+  .stage{perspective:850px}
+  .door.left{display:none}
+
+  /* ماهوجني داكن فاخر */
+  .door.right{
+    width:100%;left:0;right:0;
+    transform-origin:0% 50%;
+    will-change:transform;
+    background:
+      /* نسيج الخشب الأفقي */
+      repeating-linear-gradient(180deg,
+        transparent 0px,rgba(200,140,60,.012) 1px,
+        transparent 2px,rgba(0,0,0,.042) 44px),
+      /* مسام عمودية خفيفة */
+      repeating-linear-gradient(90deg,
+        transparent 0px,rgba(0,0,0,.014) 1px,
+        transparent 1px,transparent 28px),
+      /* تعتيم الحواف */
+      radial-gradient(ellipse at 50% 50%,transparent 18%,rgba(0,0,0,.62) 100%),
+      /* لون ماهوجني */
+      linear-gradient(168deg,#2e1f0b 0%,#1c1106 34%,#281808 60%,#150e04 100%);
+    box-shadow:
+      inset -22px 0 55px rgba(0,0,0,.88),
+      inset  10px 0 24px rgba(0,0,0,.52),
+      inset   0  0 90px rgba(0,0,0,.28),
+      18px 0 65px rgba(0,0,0,.99)
+  }
+
+  /* إطار خارجي ذهبي (الخط الأول) */
+  .door.right::before{
+    content:"";position:absolute;inset:8px;
+    border:1.5px solid rgba(212,175,55,.52);
+    border-radius:2px;pointer-events:none;z-index:1
+  }
+
+  /* إطار داخلي ذهبي (الخط الثاني — تضاعف) */
+  .door.right::after{
+    content:"";position:absolute;inset:14px;
+    border:0.75px solid rgba(212,175,55,.22);
+    border-radius:1px;pointer-events:none;z-index:1
+  }
+
+  /* مقبض على الحافة الحرة */
+  .door.right .handle{left:auto;right:24px;transform:translateY(-50%)}
+  .door.right .ornament{display:none}
+  .door.right .door-label{display:none}
+  .lock{display:none}
+
+  /* منطقة اللوحات — داخل الإطار */
+  .door.right .door-inner{
+    position:absolute;
+    inset:22px;
+    border:none;border-radius:0;
+    background:transparent;box-shadow:none;padding:0;
+    display:flex;flex-direction:column;gap:18px;align-items:stretch;
+    z-index:2
+  }
+
+  /* اللوحة العلوية — قصيرة وزخرفية */
+  .door.right .door-inner::before{
+    content:"";position:relative;
+    top:auto;left:auto;right:auto;bottom:auto;
+    display:block;flex:0 0 27%;
+    border:1px solid rgba(212,175,55,.44);
+    border-radius:1px;
+    background:
+      linear-gradient(145deg,
+        rgba(255,215,110,.09) 0%,rgba(255,215,110,.02) 30%,
+        rgba(0,0,0,.32) 100%);
+    box-shadow:
+      inset  3px  3px 12px rgba(0,0,0,.72),
+      inset -2px -2px  6px rgba(0,0,0,.45),
+      inset  1px  1px  0px rgba(255,220,100,.08)
+  }
+
+  /* اللوحة السفلية — الأساسية والكبيرة */
+  .door.right .door-inner::after{
+    content:"";position:relative;
+    top:auto;left:auto;right:auto;bottom:auto;
+    display:block;flex:1;
+    border:1px solid rgba(212,175,55,.32);
+    border-radius:1px;
+    background:
+      linear-gradient(145deg,
+        rgba(255,215,110,.065) 0%,rgba(255,215,110,.015) 25%,
+        rgba(0,0,0,.30) 100%);
+    box-shadow:
+      inset  3px  3px 14px rgba(0,0,0,.72),
+      inset -2px -2px  7px rgba(0,0,0,.45),
+      inset  1px  1px  0px rgba(255,220,100,.06)
+  }
+
+  /* أوقف العناصر الثقيلة */
+  .rays{display:none}
+  .grain{display:none}
+  .medallion::after{animation:none}
+  .date-badge{animation:none}
+  .door-label{display:none}
+
+  /* شيل الـ blur */
+  .bg-glow{filter:none}
+  .hall-glow{filter:blur(8px)}
+  .rsvp-modal{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(0,0,0,.88)}
+  .title{filter:drop-shadow(0 2px 8px rgba(0,0,0,.9))}
 }
 
 /* small phones */
