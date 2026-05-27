@@ -304,13 +304,20 @@ const Confetti = (function () {
     nameErr.textContent = '';
   });
 
-  const SHEET_URL = 'https://ahmedalaa8.github.io/BrBr/rsvp.json'; // REPLACE with your Apps Script URL or leave as is to disable savings
+  const WEB3_KEY = '5c691b30-8369-4fee-98f9-25e5dec243d2';
 
   function saveToSheet(record) {
-    if (!SHEET_URL || SHEET_URL === 'YOUR_APPS_SCRIPT_URL') return;
-    fetch(SHEET_URL, {
+    if (WEB3_KEY === 'YOUR_WEB3FORMS_ACCESS_KEY') return;
+    fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      body: JSON.stringify(record)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: WEB3_KEY,
+        subject: 'تأكيد حضور — ' + record.name,
+        name: record.name,
+        count: record.count,
+        date: record.date
+      })
     }).catch(() => {});
   }
 
