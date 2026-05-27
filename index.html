@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>دعوة فرح 💍 — أحمد & عبير</title>
+<meta name="description" content="دعوة زفاف فاخرة — أحمد وعبير (بربوره) — 27 يوليو 2027" />
+
+<!-- ====== FONTS: Aref Ruqaa (calligraphy) · Amiri (verses) · Tajawal (body) ====== -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@200;300;400;500;700;900&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+<!-- ============================================================
+     INTRO LOADER
+============================================================ -->
+<div class="loader" id="loader">
+  <div class="loader-ring"><span class="loader-mono">💍</span></div>
+  <div class="loader-text">دعوة فرح</div>
+</div>
+
+<!-- ====== BACKGROUND LAYERS (black & gold) ====== -->
+<div class="bg"></div>
+<div class="bg-glow" data-depth="2"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div class="layer" id="dustLayer"></div>
+
+<!-- ====== FLOATING MUSIC BUTTON ====== -->
+<button class="music-btn" id="musicBtn" title="موسيقى رومانسية" aria-label="تشغيل الموسيقى">🎵</button>
+
+<!-- ====== CONFETTI CANVAS ====== -->
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<!-- ============================================================
+     HALL — grand ballroom doors that OPEN on scroll
+     .hall is tall (scroll track); .stage stays pinned while the
+     two doors swing apart and warm gold light floods out to
+     reveal the wedding title behind them.
+============================================================ -->
+<section class="hall" id="hall">
+  <div class="stage" id="stage">
+
+    <!-- warm light + god-rays behind the doors -->
+    <div class="hall-glow"></div>
+    <div class="rays"></div>
+
+    <!-- the invitation revealed BEHIND the doors -->
+    <div class="hero-inner" id="heroInner">
+      <p class="eyebrow">بسم الله نبدأ حكايتنا</p>
+      <div class="rule"><span></span>❖<span></span></div>
+      <div class="title-ring">💍</div>
+      <h1 class="title">دعوة فرح</h1>
+      <div class="subtitle"><span class="typing caret" id="typing"></span></div>
+      <div class="names"><span>أحمد</span><i class="amp">&amp;</i><span>عبير<small>(بربوره)</small></span></div>
+      <div class="rule"><span></span>❖<span></span></div>
+    </div>
+
+    <!-- LEFT door — matte-black royal leaf -->
+    <div class="door left">
+      <div class="door-inner">
+        <svg class="ornament" viewBox="0 0 120 120" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.1">
+            <circle cx="60" cy="60" r="49"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(45 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(90 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(135 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(180 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(225 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(270 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(315 60 60)"/>
+            <circle cx="60" cy="60" r="9"/>
+          </g>
+        </svg>
+      </div>
+      <span class="handle"></span>
+    </div>
+
+    <!-- RIGHT door — matte-black royal leaf -->
+    <div class="door right">
+      <div class="door-inner">
+        <svg class="ornament" viewBox="0 0 120 120" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.1">
+            <circle cx="60" cy="60" r="49"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(45 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(90 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(135 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(180 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(225 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(270 60 60)"/>
+            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(315 60 60)"/>
+            <circle cx="60" cy="60" r="9"/>
+          </g>
+        </svg>
+      </div>
+      <span class="handle"></span>
+    </div>
+
+    <!-- premium center lock on the seam (fades as the doors open) -->
+    <div class="lock" aria-hidden="true"></div>
+
+    <!-- scroll-to-open hint -->
+    <div class="open-hint">
+      <span class="mouse"><span class="wheel"></span></span>
+      <span>اسحب لأسفل لفتح أبواب القاعة</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     COUNTDOWN
+============================================================ -->
+<section id="countdown">
+  <h2 class="section-title reveal">العدّ التنازلي ليوم العمر</h2>
+  <p class="section-sub reveal">لحظاتٌ تفصلنا عن أجمل يوم</p>
+
+  <div class="date-badge reveal">٢٧ يوليو ٢٠٢٧</div>
+
+  <div class="countdown reveal">
+    <div class="count-card"><div class="num" id="days">00</div><div class="lbl">يوم</div></div>
+    <div class="count-card"><div class="num" id="hours">00</div><div class="lbl">ساعة</div></div>
+    <div class="count-card"><div class="num" id="minutes">00</div><div class="lbl">دقيقة</div></div>
+    <div class="count-card"><div class="num" id="seconds">00</div><div class="lbl">ثانية</div></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BRIDE & GROOM
+============================================================ -->
+<section id="couple">
+  <h2 class="section-title reveal">العروسان</h2>
+  <p class="section-sub reveal">قصةُ حبٍّ تُتوَّج بالزواج</p>
+
+  <div class="couple reveal">
+    <figure class="person">
+      <div class="medallion groom">
+        <svg class="sil" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="40" r="19"/>
+          <path d="M28 112C28 82 43 72 60 72s32 10 32 40"/>
+          <path d="M50 73l10 19 10-19"/>
+        </svg>
+      </div>
+      <figcaption class="pname">العريس أحمد</figcaption>
+    </figure>
+
+    <div class="couple-heart">❤</div>
+
+    <figure class="person">
+      <div class="medallion bride">
+        <svg class="sil" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="42" r="17"/>
+          <path d="M32 112C32 84 46 74 60 74s28 10 28 38"/>
+          <path d="M40 30Q60 12 80 30"/>
+          <path d="M30 58Q33 98 46 112"/>
+          <path d="M90 58Q87 98 74 112"/>
+        </svg>
+      </div>
+      <figcaption class="pname">العروس عبير</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================================================
+     RSVP
+============================================================ -->
+<section id="rsvp">
+  <h2 class="section-title reveal">شرّفونا بحضوركم</h2>
+  <p class="rsvp-text reveal">
+    يسعدنا ويشرّفنا دعوتكم لمشاركتنا فرحة العمر،
+    فحضوركم تاجٌ على رؤوسنا وبهجةٌ لقلوبنا.
+    نترقّب لحظة لقائكم لنبدأ معًا أجمل الذكريات.
+  </p>
+  <button class="btn reveal" id="rsvpBtn">أؤكّد حضوري 🎉</button>
+  <div class="thanks" id="thanks">شكرًا لكم 💛 بانتظاركم بفارغ الصبر</div>
+</section>
+
+<!-- ============================================================
+     RSVP MODAL — guest writes their name → saved to a sheet
+============================================================ -->
+<div class="rsvp-modal" id="rsvpModal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="rsvp-card">
+    <button class="rsvp-close" id="rsvpClose" aria-label="إغلاق">&times;</button>
+    <div class="rsvp-ring">💍</div>
+    <h3>تأكيد الحضور</h3>
+    <p>سعداء بمشاركتكم فرحتنا — من فضلك اكتب اسمك</p>
+    <form id="rsvpForm">
+      <input type="text" id="guestName" placeholder="الاسم الكريم" autocomplete="name" required />
+      <input type="number" id="guestCount" placeholder="عدد الأفراد" min="1" max="50" value="1" />
+      <button type="submit" class="btn">إرسال التأكيد 🎉</button>
+    </form>
+    <div class="rsvp-status" id="rsvpStatus"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="rule"><span></span>❖<span></span></div>
+  <div class="verse">"ومن آياته أن خلق لكم من أنفسكم أزواجًا لتسكنوا إليها وجعل بينكم مودّةً ورحمة"</div>
+  <div class="small">بدعوةٍ من عائلتَي العروسين — نتشرّف بحضوركم وبركة دعواتكم ✨</div>
+</footer>
+
+<script src="js/script.js" defer></script>
+</body>
+</html>
