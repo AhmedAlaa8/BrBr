@@ -7,7 +7,6 @@
    C. Typing subtitle
    D. Countdown → 27 July 2027
    E. Scroll driver — hall doors opening + section unfold
-   F. Parallax (mouse) on the background glow
    G. Background romantic music (Web Audio, self-contained)
    H. Confetti (canvas)
    I. RSVP button
@@ -119,7 +118,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
   if (reduceMotion) {
     reveals.forEach(el => el.style.setProperty('--p', '1'));
-    if (stage) stage.style.setProperty('--open', '1');
+    if (stage) { stage.style.setProperty('--open', '1'); stage.style.setProperty('--open-max', '1'); }
     if (heroInner) { heroInner.style.opacity = '1'; heroInner.style.transform = 'scale(1)'; }
     return;
   }
@@ -136,6 +135,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   if (!hall || !stage || !heroInner) return;
 
   const mobileDoor = document.querySelector('.door.right');
+  let maxOpen = 0;
 
   /* scroll-linked rAF — ديسكتوب وموبايل */
   let ticking = false;
@@ -144,15 +144,20 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     const vh   = window.innerHeight;
     if (rect.bottom < 0 || rect.top > vh) { ticking = false; return; }
 
-    const open = clamp(-rect.top / (hall.offsetHeight - vh || 1));
-    stage.style.setProperty('--open', open.toFixed(3));
+    const rawOpen = clamp(-rect.top / (hall.offsetHeight - vh || 1));
+    maxOpen = Math.max(maxOpen, rawOpen);
+    stage.style.setProperty('--open',     rawOpen.toFixed(3));
+    stage.style.setProperty('--open-max', maxOpen.toFixed(3));
 
-    /* موبايل: transform مباشر على الباب بدون CSS var عشان يشتغل على الـ GPU بدون لاج */
-    if (mobileDoor && window.innerWidth <= 600) {
-      mobileDoor.style.transform = `rotateY(${(open * 88).toFixed(1)}deg)`;
+    /* موبايل: transform مباشر على الباب — GPU compositor بدون لاج
+       لو resize من موبايل لـ desktop: امسح الـ inline style عشان CSS يرجع يتحكم */
+    if (window.innerWidth <= 600) {
+      if (mobileDoor) mobileDoor.style.transform = `rotateY(${(rawOpen * 88).toFixed(1)}deg)`;
+    } else if (mobileDoor) {
+      mobileDoor.style.transform = '';
     }
 
-    const hero = clamp((open - 0.45) / 0.5);
+    const hero = clamp((maxOpen - 0.45) / 0.5);
     heroInner.style.opacity   = (0.05 + 0.95 * hero).toFixed(3);
     heroInner.style.transform = `scale(${(0.92 + 0.08 * hero).toFixed(3)})`;
     ticking = false;
@@ -245,7 +250,7 @@ const Confetti = (function () {
       ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
       ctx.fillStyle = p.c;
       if (p.shape === 'rect') ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
-      else { ctx.beginPath(); ctx.arc(0, 0, p.r / 2, 0, 7); ctx.fill(); }
+      else { ctx.beginPath(); ctx.arc(0, 0, p.r / 2, 0, Math.PI * 2); ctx.fill(); }
       ctx.restore();
     });
     pieces = pieces.filter(p => p.y < H + 30);
@@ -295,7 +300,16 @@ const Confetti = (function () {
     openBtn.focus();
   }
 
-  openBtn.addEventListener('click', openModal);
+  function markDone() {
+    openBtn.textContent = 'تم تأكيد الحضور ✓';
+    openBtn.disabled = true;
+    openBtn.style.opacity = '0.65';
+    openBtn.style.cursor = 'not-allowed';
+    thanks.classList.add('show');
+  }
+  if (localStorage.getItem('rsvp_done')) markDone();
+
+  openBtn.addEventListener('click', () => { if (!localStorage.getItem('rsvp_done')) openModal(); });
   closeBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', e => {
@@ -341,13 +355,21 @@ const Confetti = (function () {
     const countRaw = parseInt(countIn.value, 10);
     let valid      = true;
 
-    if (name.length < 2) {
+    const nameOk  = name.length >= 2;
+    const countOk = countIn.value && !isNaN(countRaw) && countRaw >= 1 && countRaw <= 50;
+
+    if (!nameOk) {
       showError(nameIn, nameErr, 'من فضلك ادخل اسمك الكريم');
       valid = false;
     }
-    if (!countIn.value || isNaN(countRaw) || countRaw < 1 || countRaw > 50) {
-      showError(countIn, countErr, 'العدد يجب أن يكون بين ١ و ٥٠');
-      if (valid) valid = false;
+    if (!countOk) {
+      if (nameOk) {
+        showError(countIn, countErr, 'العدد يجب أن يكون بين ١ و ٥٠');
+      } else {
+        countIn.classList.add('error');
+        countErr.textContent = 'العدد يجب أن يكون بين ١ و ٥٠';
+      }
+      valid = false;
     }
     if (!valid) return;
 
@@ -356,9 +378,9 @@ const Confetti = (function () {
 
     statusEl.textContent = 'تم تأكيد حضورك يا ' + name + ' 💛';
     Confetti.launch();
-    thanks.classList.add('show');
+    localStorage.setItem('rsvp_done', '1');
+    markDone();
     form.reset();
-    countIn.value = '1';
     setTimeout(closeModal, 1600);
   });
 })();

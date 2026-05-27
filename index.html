@@ -16,6 +16,24 @@
 
 <body>
 
+<!-- SVG symbol — ornament الأبواب (مرجع واحد بدل تكرار الكود) -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="door-ornament" viewBox="0 0 120 120">
+    <g fill="none" stroke="currentColor" stroke-width="1.1">
+      <circle cx="60" cy="60" r="49"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(45 60 60)"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(90 60 60)"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(135 60 60)"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(180 60 60)"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(225 60 60)"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(270 60 60)"/>
+      <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(315 60 60)"/>
+      <circle cx="60" cy="60" r="9"/>
+    </g>
+  </symbol>
+</svg>
+
 <!-- ============================================================
      INTRO LOADER
 ============================================================ -->
@@ -26,7 +44,7 @@
 
 <!-- ====== BACKGROUND LAYERS (black & gold) ====== -->
 <div class="bg"></div>
-<div class="bg-glow" data-depth="2"></div>
+<div class="bg-glow"></div>
 <div class="vignette"></div>
 <div class="grain"></div>
 <div class="layer" id="dustLayer"></div>
@@ -57,27 +75,14 @@
       <div class="title-ring">💍</div>
       <h1 class="title">دعوة فرح</h1>
       <div class="subtitle"><span class="typing caret" id="typing"></span></div>
-      <div class="names"><span>أحمد</span><i class="amp">&amp;</i><span>عبير<small></small></span></div>
+      <div class="names"><span>أحمد</span><span class="amp">&amp;</span><span>عبير</span></div>
       <div class="rule"><span></span>❖<span></span></div>
     </div>
 
     <!-- LEFT door — matte-black royal leaf -->
     <div class="door left">
       <div class="door-inner">
-        <svg class="ornament" viewBox="0 0 120 120" aria-hidden="true">
-          <g fill="none" stroke="currentColor" stroke-width="1.1">
-            <circle cx="60" cy="60" r="49"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(45 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(90 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(135 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(180 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(225 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(270 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(315 60 60)"/>
-            <circle cx="60" cy="60" r="9"/>
-          </g>
-        </svg>
+        <svg class="ornament" aria-hidden="true"><use href="#door-ornament"/></svg>
         <div class="door-label">أحمد</div>
       </div>
       <span class="handle"></span>
@@ -86,20 +91,7 @@
     <!-- RIGHT door — matte-black royal leaf -->
     <div class="door right">
       <div class="door-inner">
-        <svg class="ornament" viewBox="0 0 120 120" aria-hidden="true">
-          <g fill="none" stroke="currentColor" stroke-width="1.1">
-            <circle cx="60" cy="60" r="49"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(45 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(90 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(135 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(180 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(225 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(270 60 60)"/>
-            <ellipse cx="60" cy="33" rx="8.5" ry="23" transform="rotate(315 60 60)"/>
-            <circle cx="60" cy="60" r="9"/>
-          </g>
-        </svg>
+        <svg class="ornament" aria-hidden="true"><use href="#door-ornament"/></svg>
         <div class="door-label">عبير</div>
       </div>
       <span class="handle"></span>
@@ -187,20 +179,22 @@
 <!-- ============================================================
      RSVP MODAL — guest writes their name → saved to a sheet
 ============================================================ -->
-<div class="rsvp-modal" id="rsvpModal" aria-hidden="true" role="dialog" aria-modal="true">
+<div class="rsvp-modal" id="rsvpModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalHeading">
   <div class="rsvp-card">
     <button class="rsvp-close" id="rsvpClose" aria-label="إغلاق">&times;</button>
     <div class="rsvp-ring">💍</div>
-    <h3>تأكيد الحضور</h3>
+    <h3 id="modalHeading">تأكيد الحضور</h3>
     <p>سعداء بمشاركتكم فرحتنا — من فضلك اكتب اسمك</p>
     <form id="rsvpForm" novalidate>
+      <label for="guestName" class="sr-only">الاسم الكريم</label>
       <input type="text" id="guestName" placeholder="الاسم الكريم" autocomplete="name" />
-      <span class="field-error" id="nameError"></span>
+      <span class="field-error" id="nameError" role="alert"></span>
+      <label for="guestCount" class="sr-only">عدد الأفراد</label>
       <input type="text" id="guestCount" inputmode="numeric" placeholder="عدد الأفراد" value="1" maxlength="2" />
-      <span class="field-error" id="countError"></span>
+      <span class="field-error" id="countError" role="alert"></span>
       <button type="submit" class="btn">إرسال التأكيد 🎉</button>
     </form>
-    <div class="rsvp-status" id="rsvpStatus"></div>
+    <div class="rsvp-status" id="rsvpStatus" aria-live="polite"></div>
   </div>
 </div>
 
